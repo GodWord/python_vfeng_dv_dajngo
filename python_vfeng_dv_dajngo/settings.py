@@ -10,11 +10,17 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
+import datetime
+import os
+import sys
 from pathlib import Path
+from pathlib import Path, PurePath
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+sys.path.insert(0, str(PurePath(BASE_DIR, 'apps')))
+sys.path.insert(0, str(PurePath(BASE_DIR, 'libs')))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -25,8 +31,7 @@ SECRET_KEY = "django-insecure-^=_pgr27=duc1vbyt3tlgi$fvo6%p##n7q)w3#*25$we6o-+5o
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -37,6 +42,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "rbac",
 ]
 
 MIDDLEWARE = [
@@ -70,7 +76,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "python_vfeng_dv_dajngo.wsgi.application"
 
-
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
@@ -80,7 +85,6 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -100,23 +104,49 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = 'zh-hans'
 
-TIME_ZONE = "UTC"
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 
-USE_TZ = True
+USE_L10N = True
 
+USE_TZ = False
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+]
+MEDIA_URL = '/media/'
+
+MEDIA_ROOT = os.path.join(
+    BASE_DIR, 'media'
+)
+
+# DEFAULT_FILE_STORAGE = "minio_storage.storage.MinioMediaStorage"
+# STATICFILES_STORAGE = "minio_storage.storage.MinioStaticStorage"
+# MINIO_STORAGE_ENDPOINT = env('MINIO_STORAGE_ENDPOINT')
+# MINIO_STORAGE_ACCESS_KEY = env('MINIO_STORAGE_ACCESS_KEY')
+# MINIO_STORAGE_SECRET_KEY = env('MINIO_STORAGE_SECRET_KEY')
+# MINIO_STORAGE_USE_HTTPS = env('MINIO_STORAGE_USE_HTTPS', cast=bool)
+
+# MINIO_STORAGE_MEDIA_BUCKET_NAME = 'media'
+# MINIO_STORAGE_AUTO_CREATE_MEDIA_BUCKET = True
+# MINIO_STORAGE_STATIC_BUCKET_NAME = 'static'
+# MINIO_STORAGE_AUTO_CREATE_STATIC_BUCKET = True
+
+if not os.path.exists(MEDIA_ROOT):
+    os.makedirs(MEDIA_ROOT)
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'collectstatic')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
